@@ -1,0 +1,500 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>AutoGen Chat Assistant</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, sans-serif;
+        }
+        body {
+            background-color: #f5f5f5;
+            height: 100vh;
+            display: flex;
+            flex-direction: column;
+        }
+        .header {
+            background-color: #222;
+            color: white;
+            padding: 12px 20px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+        .header h1 {
+            font-size: 18px;
+            font-weight: 500;
+        }
+        .login-btn {
+            background-color: white;
+            color: #333;
+            border: none;
+            border-radius: 4px;
+            padding: 4px 12px;
+            cursor: pointer;
+            font-size: 14px;
+        }
+        .menu-btn {
+            background: none;
+            border: none;
+            color: white;
+            font-size: 20px;
+            cursor: pointer;
+        }
+        .toolbar {
+            padding: 12px 20px;
+            display: flex;
+            gap: 15px;
+            background-color: #f5f5f5;
+            border-bottom: 1px solid #e0e0e0;
+        }
+        .toolbar-btn {
+            display: flex;
+            align-items: center;
+            gap: 5px;
+            background: none;
+            border: none;
+            cursor: pointer;
+            color: #555;
+            font-size: 14px;
+        }
+        .landing-container {
+            flex: 1;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            padding: 20px;
+            text-align: center;
+        }
+        .chat-icon {
+            color: #6c5ce7;
+            font-size: 64px;
+            margin-bottom: 20px;
+        }
+        .landing-title {
+            font-size: 28px;
+            font-weight: 600;
+            margin-bottom: 20px;
+            color: #333;
+        }
+        .landing-subtitle {
+            font-size: 18px;
+            margin-bottom: 30px;
+            color: #555;
+            max-width: 600px;
+        }
+        /* Add new style for the empowered text */
+        .landing-empowered {
+            font-size: 14px; /* Smaller than subtitle */
+            font-style: italic;
+            color: #777; /* Slightly muted color */
+            margin-top: -15px; /* Adjust spacing if needed */
+            margin-bottom: 30px;
+        }
+        .example-questions {
+            display: flex;
+            flex-direction: column;
+            gap: 10px;
+            width: 100%;
+            max-width: 600px;
+            margin-top: 20px;
+        }
+        .question-btn {
+            background-color: #f0f2f5;
+            border: none;
+            border-radius: 8px;
+            padding: 12px 16px;
+            font-size: 15px;
+            text-align: left;
+            cursor: pointer;
+            color: #333;
+            transition: background-color 0.2s;
+        }
+        .question-btn:hover {
+            background-color: #e4e6e9;
+        }
+        .input-container {
+            width: 100%;
+            max-width: 600px;
+            margin-top: 30px;
+            display: flex;
+        }
+        .input-box {
+            flex: 1;
+            padding: 12px;
+            border: 1px solid #ccc;
+            border-radius: 8px;
+            font-size: 16px;
+            outline: none;
+        }
+        .send-btn {
+            background-color: #6c5ce7;
+            color: white;
+            border: none;
+            border-radius: 8px;
+            width: 40px;
+            margin-left: 10px;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+        .chat-content {
+            display: none;
+            flex-direction: column;
+            height: 100%;
+        }
+        .chat-container {
+            flex: 1;
+            padding: 20px;
+            overflow-y: auto;
+            display: flex;
+            flex-direction: column;
+            gap: 20px;
+        }
+        .message {
+            max-width: 80%;
+        }
+        .user-message {
+            align-self: flex-end;
+            background-color: #e9ecef;
+            padding: 12px 16px;
+            border-radius: 16px;
+            border-bottom-right-radius: 4px;
+        }
+        .bot-message {
+            align-self: flex-start;
+            background-color: white;
+            padding: 15px;
+            border-radius: 8px;
+            box-shadow: 0 1px 3px rgba(0,0,0,0.1);
+            position: relative;
+        }
+        .bot-icon {
+            color: #6c5ce7;
+            font-size: 22px;
+            position: absolute;
+            top: 10px;
+            left: 10px;
+        }
+        .bot-content {
+            padding-left: 25px;
+        }
+        .citation {
+            margin-top: 8px;
+            font-size: 13px;
+            color: #555;
+        }
+        .citation a {
+            color: #6c5ce7;
+            text-decoration: none;
+        }
+        .follow-up {
+            margin-top: 12px;
+        }
+        .follow-up h4 {
+            font-size: 14px;
+            color: #555;
+            margin-bottom: 5px;
+        }
+        .follow-up p {
+            font-size: 14px;
+            color: #333;
+            margin-bottom: 3px;
+            font-style: italic;
+        }
+        .action-btns {
+            display: flex;
+            gap: 10px;
+            margin-top: 5px;
+            justify-content: flex-end;
+        }
+        .action-btn {
+            background: none;
+            border: none;
+            color: #777;
+            cursor: pointer;
+        }
+        .chat-input-container {
+            padding: 15px;
+            background-color: white;
+            border-top: 1px solid #e0e0e0;
+            display: flex;
+        }
+        .footnote {
+            font-size: 12px;
+            color: #777;
+            vertical-align: super;
+        }
+    </style>
+</head>
+<body>
+    <div class="header">
+        <h1>Azure AI Foundry + AutoGen</h1>
+        <div class="nav">
+            <!-- <button class="login-btn">Login</button> -->
+            <!-- <button class="menu-btn">☰</button> -->
+        </div>
+    </div>
+    
+    <div class="toolbar">
+        <button class="toolbar-btn">
+            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                <path d="M6 18L18 6M6 6l12 12"></path>
+            </svg>
+            Clear chat
+        </button>
+    </div>
+
+    <!-- Landing Page Content -->
+    <div id="landing-page" class="landing-container">
+        <div class="chat-icon">
+            <svg width="64" height="64" viewBox="0 0 24 24" fill="#6c5ce7">
+                <path d="M12 0L8 4H4v4L0 12l4 4v4h4l4 4 4-4h4v-4l4-4-4-4V4h-4L12 0z"></path>
+            </svg>
+            <svg width="40" height="40" viewBox="0 0 24 24" fill="#6c5ce7" style="position: relative; top: -15px; left: -15px;">
+                <path d="M12 0L8 4H4v4L0 12l4 4v4h4l4 4 4-4h4v-4l4-4-4-4V4h-4L12 0z"></path>
+            </svg>
+        </div>
+        <h1 class="landing-title">What can I help with?</h1>
+        <p class="landing-subtitle">Ask anything or try an example</p>
+        <!-- Add the new empowered text paragraph -->
+        <!-- <p class="landing-empowered">Empowered by Azure AI Foundry & AutoGen</p> -->
+
+        <div class="example-questions">
+            <button class="question-btn" data-question="What comes next in the sequence: 2, 4, 8, 16, ?">
+                What comes next in the sequence: 2, 4, 8, 16, ?
+            </button>
+            <button class="question-btn" data-question="What's the capital of Ireland?">
+                What's the capital of Ireland?
+            </button>
+        </div>
+
+        <div class="input-container">
+            <input type="text" id="landing-input" class="input-box" placeholder="Type a new question (e.g. Who is Ommar Khayyam?)">
+            <button id="landing-send-btn" class="send-btn">
+                <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="white" stroke-width="2">
+                    <path d="M22 2L11 13M22 2l-7 20-4-9-9-4 20-7z"></path>
+                </svg>
+            </button>
+        </div>
+    </div>
+
+    <!-- Chat Content (Initially Hidden) -->
+    <div id="chat-page" class="chat-content">
+        <div class="chat-container" id="chat-container">
+            <!-- Messages will be added here dynamically -->
+        </div>
+        
+        <div class="chat-input-container">
+            <input type="text" id="chat-input" class="input-box" placeholder="Type a new question (e.g. Tell me a fun fact!?)">
+            <button id="chat-send-btn" class="send-btn">
+                <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="white" stroke-width="2">
+                    <path d="M22 2L11 13M22 2l-7 20-4-9-9-4 20-7z"></path>
+                </svg>
+            </button>
+        </div>
+    </div>
+
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            const landingPage = document.getElementById('landing-page');
+            const chatPage = document.getElementById('chat-page');
+            const chatContainer = document.getElementById('chat-container');
+            const landingInput = document.getElementById('landing-input');
+            const landingSendBtn = document.getElementById('landing-send-btn');
+            const chatInput = document.getElementById('chat-input');
+            const chatSendBtn = document.getElementById('chat-send-btn');
+            const questionBtns = document.querySelectorAll('.question-btn');
+            
+            // Backend API URL - replace with your actual backend endpoint
+            const API_URL = "http://localhost:5000/chat";
+            
+            // Function to switch from landing page to chat page
+            function switchToChat() {
+                landingPage.style.display = 'none';
+                chatPage.style.display = 'flex';
+            }
+            
+            // Function to add a user message to the chat
+            function addUserMessage(message) {
+                const userMessageDiv = document.createElement('div');
+                userMessageDiv.className = 'message user-message';
+                userMessageDiv.textContent = message;
+                chatContainer.appendChild(userMessageDiv);
+                
+                // Scroll to bottom
+                chatContainer.scrollTop = chatContainer.scrollHeight;
+            }
+            
+            // Function to add a thinking indicator
+            function addThinkingIndicator() {
+                const thinkingDiv = document.createElement('div');
+                thinkingDiv.className = 'message bot-message thinking';
+                thinkingDiv.innerHTML = `
+                    <div class="bot-icon">⬢</div>
+                    <div class="bot-content">
+                        <div class="thinking-dots">
+                            <span>.</span><span>.</span><span>.</span>
+                        </div>
+                    </div>
+                `;
+                chatContainer.appendChild(thinkingDiv);
+                chatContainer.scrollTop = chatContainer.scrollHeight;
+                return thinkingDiv;
+            }
+            
+            // Function to add a bot message to the chat
+            function addBotMessage(response) {
+                console.log('Adding bot message with response:', response); // Log the response passed to this function
+                const botMessageDiv = document.createElement('div');
+                botMessageDiv.className = 'message bot-message';
+                
+                // Check for the primary response key, then the error key, then fallback
+                const messageText = response.response || response.text || "Sorry, I couldn't get a valid response.";
+
+                let followUpHTML = '';
+                
+                const citationHTML = response.citation ? 
+                    `<div class="citation">
+                        Citations: <a href="#">${response.citation}</a>
+                    </div>` : '';
+                
+                botMessageDiv.innerHTML = `
+                    <div class="bot-icon">⬢</div>
+                    <div class="bot-content">
+                        ${messageText}
+                        
+                        ${citationHTML}
+                        
+                        ${followUpHTML}
+                        
+                        
+                    </div>
+                `;
+                
+                chatContainer.appendChild(botMessageDiv);
+                chatContainer.scrollTop = chatContainer.scrollHeight;
+            }
+            
+            // Function to send message to backend API (Autogen)
+            async function getAIResponse(message) {
+                // Generate a simple session ID (replace with a more robust method if needed)
+                if (!window.sessionId) {
+                    window.sessionId = 'session_' + Date.now() + '_' + Math.random().toString(36).substring(2, 15);
+                }
+                
+                try {
+                    const response = await fetch(API_URL, {
+                        method: 'POST',
+                        headers: {
+                            'Content-Type': 'application/json',
+                        },
+                        // Send both message and session_id
+                        body: JSON.stringify({ message: message, session_id: window.sessionId }) 
+                    });
+                    
+                    if (!response.ok) {
+                        throw new Error(`HTTP error! status: ${response.status}`);
+                    }
+                    
+                    const data = await response.json();
+                    return data;
+                } catch (error) {
+                    console.error('Error fetching from backend:', error); // Log the actual error
+                    return {
+                        text: "I apologize, but I'm having trouble connecting to the backend right now. Please check the console for errors and try again later.",
+                        citation: null,
+                        followUp: [] // Return empty array for followUp on error
+                    };
+                }
+            }
+            
+            // Function to process a message
+            async function processMessage(message) {
+                if (!message.trim()) return;
+                
+                // Switch to chat view if on landing page
+                if (landingPage.style.display !== 'none') {
+                    switchToChat();
+                }
+                
+                // Add user message
+                addUserMessage(message);
+                
+                // Clear input
+                landingInput.value = '';
+                chatInput.value = '';
+                
+                // Show thinking indicator
+                const thinkingIndicator = addThinkingIndicator();
+                
+                // Get AI response
+                try {
+                    const response = await getAIResponse(message);
+                    console.log('Response received from getAIResponse:', response); // Log the received response
+                    
+                    // Remove thinking indicator
+                    chatContainer.removeChild(thinkingIndicator);
+                    
+                    // Display bot response
+                    addBotMessage(response);
+                } catch (error) {
+                    console.error('Error processing message:', error);
+                    
+                    // Remove thinking indicator
+                    chatContainer.removeChild(thinkingIndicator);
+                    
+                    // Display error message
+                    addBotMessage({
+                        text: "I'm sorry, I encountered an error while processing your question. Please try again later.",
+                        citation: null
+                    });
+                }
+            }
+            
+            // Event listeners for the question buttons
+            questionBtns.forEach(btn => {
+                btn.addEventListener('click', function() {
+                    const question = this.getAttribute('data-question');
+                    processMessage(question);
+                });
+            });
+            
+            // Event listeners for the send buttons
+            landingSendBtn.addEventListener('click', function() {
+                processMessage(landingInput.value);
+            });
+            
+            chatSendBtn.addEventListener('click', function() {
+                processMessage(chatInput.value);
+            });
+            
+            // Event listeners for pressing Enter in the input fields
+            landingInput.addEventListener('keypress', function(e) {
+                if (e.key === 'Enter') {
+                    processMessage(landingInput.value);
+                }
+            });
+            
+            chatInput.addEventListener('keypress', function(e) {
+                if (e.key === 'Enter') {
+                    processMessage(chatInput.value);
+                }
+            });
+            
+            // Event listener for the clear chat button
+            document.querySelector('.toolbar-btn:first-child').addEventListener('click', function() {
+                chatContainer.innerHTML = '';
+                landingPage.style.display = 'flex';
+                chatPage.style.display = 'none';
+            });
+        });
+    </script>
+</body>
+</html>

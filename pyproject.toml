@@ -1,0 +1,18 @@
+[project]
+name = "chatbot_with_ui"
+version = "0.1.0"
+requires-python = ">=3.12"
+dependencies = [
+    "autogen-ext",
+    "autogen-agentchat",
+    "autogen-core",
+    "python-dotenv",
+    "openai",
+    "tiktoken",
+    "json_schema_to_pydantic",
+    "pandas",
+    "pyyaml",
+    "flask",
+    "flask_cors",
+    "Flask[async]"
+]
