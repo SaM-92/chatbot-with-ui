@@ -38,7 +38,7 @@ Follow these steps carefully to set up your environment:
 
 2.  **Clone the Repository**:
     ```bash
-    git clone <your-repository-url> # Replace with your repo URL
+    git clone https://github.com/SaM-92/chatbot-with-ui.git
     cd chatbot_with_ui
     ```
 
